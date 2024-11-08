@@ -1,7 +1,9 @@
 package com.algaworks.algafood_api.service;
 
 import com.algaworks.algafood_api.model.Cliente;
+import com.algaworks.algafood_api.notificacao.NivelUrgencia;
 import com.algaworks.algafood_api.notificacao.Notificador;
+import com.algaworks.algafood_api.notificacao.TipoDoNotificador;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -9,7 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class AtivacaoClienteService {
 
-    @Qualifier("email")
+//    @Qualifier("email")
+    @TipoDoNotificador(value = NivelUrgencia.NORMAL)
     @Autowired
     private Notificador notificador;
 

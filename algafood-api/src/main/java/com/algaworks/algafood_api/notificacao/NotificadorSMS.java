@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class NotificadorSMS implements Notificador {
 
-    @Qualifier("sms")
+//    @Qualifier("sms")
+    @TipoDoNotificador(value = NivelUrgencia.URGENTE)
     @Override
     public void notificar(Cliente cliente, String mensagem){
         System.out.printf("%s foi enviado uma mensagem para o telefone '%s': %s",
