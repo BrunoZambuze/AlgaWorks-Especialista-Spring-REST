@@ -15,7 +15,7 @@ public class NotificacaoService {
     @Autowired
     private Notificador notificador;
 
-    @EventListener //Estamos informando ao Spring que esse método está "ounvindo" se tem algum evento do ClienteAtivado
+    @EventListener //Estamos informando ao Spring que esse método está "ouvindo" se tem algum evento do ClienteAtivado
     public void clienteAtivadoListener(ClienteAtivadoEvent event){
         notificador.notificar(event.getCliente(), "Seu cadastro no sistema está ativo!");
     }

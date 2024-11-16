@@ -10,7 +10,7 @@ public class NotificadorProperties {
     /**
      * Host do servidor de e-mail
      */
-    private String hostServidor;
+    private String hostServidor; // <-- Precisa ter o mesmo nome que está no arquivo propertie
 
     /**
      * Porta do servidor de e-mail
