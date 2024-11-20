@@ -16,11 +16,15 @@ public class Restaurante {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(length = 30)
+    @Column(length = 30, nullable = false)
     private String nome;
 
-    @Column
+    @Column(nullable = false)
     private BigDecimal taxaFrete;
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Cozinha cozinha;
 
     public void alterarTaxaFrete(BigDecimal taxaFrete) {
         this.taxaFrete = taxaFrete;
