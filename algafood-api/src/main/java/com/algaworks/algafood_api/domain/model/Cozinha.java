@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 
-//@JsonRootName(value = "gastronomia")
+@JsonRootName(value = "cozinha")
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -20,7 +20,7 @@ public class Cozinha {
     private Long id;
 
 //    @JsonIgnore
-    @JsonProperty(value = "titulo")
+//    @JsonProperty(value = "titulo")
     @Column(length = 30, nullable = false)
     private String nome;
 
