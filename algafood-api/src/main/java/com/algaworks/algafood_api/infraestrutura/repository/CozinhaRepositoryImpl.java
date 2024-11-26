@@ -2,6 +2,7 @@ package com.algaworks.algafood_api.infraestrutura.repository;
 
 import com.algaworks.algafood_api.domain.model.Cozinha;
 import com.algaworks.algafood_api.domain.repository.CozinhaRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +34,11 @@ public class CozinhaRepositoryImpl implements CozinhaRepository {
 
     @Override
     @Transactional
-    public void remover(Cozinha cozinha) {
-        Cozinha cozinhaEncontrada = this.buscar(cozinha.getId());
+    public void remover(Long cozinhaId) {
+        Cozinha cozinhaEncontrada = this.buscar(cozinhaId);
+        if(cozinhaEncontrada == null){
+            throw new EmptyResultDataAccessException(1);
+        }
         entityManager.remove(cozinhaEncontrada);
     }
 }

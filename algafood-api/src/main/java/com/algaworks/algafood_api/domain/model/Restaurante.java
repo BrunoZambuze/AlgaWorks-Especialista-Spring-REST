@@ -26,8 +26,4 @@ public class Restaurante {
     @JoinColumn(nullable = false)
     private Cozinha cozinha;
 
-    public void alterarTaxaFrete(BigDecimal taxaFrete) {
-        this.taxaFrete = taxaFrete;
-    }
-
 }
