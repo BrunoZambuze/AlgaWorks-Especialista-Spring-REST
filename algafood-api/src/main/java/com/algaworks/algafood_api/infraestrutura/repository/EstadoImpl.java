@@ -2,6 +2,7 @@ package com.algaworks.algafood_api.infraestrutura.repository;
 
 import com.algaworks.algafood_api.domain.model.Estado;
 import com.algaworks.algafood_api.domain.repository.EstadoRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,11 @@ public class EstadoImpl implements EstadoRepository {
 
     @Override
     public Estado buscar(Long id) {
-        return manager.find(Estado.class, id);
+        Estado estadoEncontrado = manager.find(Estado.class, id);
+        if(estadoEncontrado == null){
+            throw new EmptyResultDataAccessException(1);
+        }
+        return estadoEncontrado;
     }
 
     @Override
