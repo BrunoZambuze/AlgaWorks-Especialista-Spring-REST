@@ -1,5 +1,6 @@
 package com.algaworks.algafood_api.domain.service;
 
+import com.algaworks.algafood_api.domain.exception.CozinhaNaoEncontradaException;
 import com.algaworks.algafood_api.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood_api.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood_api.domain.model.Cozinha;
@@ -27,7 +28,7 @@ public class CadastroCozinhaService {
             throw new EntidadeEmUsoException(String.format("Cozinha de código %d não pode ser removida, pois está em uso", cozinhaId));
 
         }catch (EmptyResultDataAccessException e){
-            throw new EntidadeNaoEncontradaException(String.format("Não existe um cadastro de cozinha com o código %d", cozinhaId));
+            throw new CozinhaNaoEncontradaException(String.format("Não existe um cadastro de cozinha com o código %d", cozinhaId));
         }
     }
 

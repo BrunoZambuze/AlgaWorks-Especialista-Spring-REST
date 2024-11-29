@@ -64,7 +64,10 @@ public class CozinhaController {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
 
         } catch (EntidadeNaoEncontradaException e){
-            return ResponseEntity.notFound().build();
+            if("Cozinha".equals(e.getNomeEntidade())){
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.internalServerError().build();
         }
     }
 

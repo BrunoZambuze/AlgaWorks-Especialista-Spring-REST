@@ -51,10 +51,13 @@ public class RestauranteController {
             return ResponseEntity.ok(restauranteAlterado);
 
         } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.notFound().build();
-
-        } catch (CozinhaNaoEncontradaException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            if("Restaurante".equals(e.getNomeEntidade())){
+                return ResponseEntity.notFound().build();
+            } else if("Cozinha".equals(e.getNomeEntidade())){
+                return ResponseEntity.badRequest().body(e.getMessage());
+            } else{
+                return ResponseEntity.internalServerError().build();
+            }
         }
     }
 
