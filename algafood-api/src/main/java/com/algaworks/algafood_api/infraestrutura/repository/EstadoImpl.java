@@ -23,11 +23,7 @@ public class EstadoImpl implements EstadoRepository {
 
     @Override
     public Estado buscar(Long id) {
-        Estado estadoEncontrado = manager.find(Estado.class, id);
-        if(estadoEncontrado == null){
-            throw new EmptyResultDataAccessException(1);
-        }
-        return estadoEncontrado;
+        return manager.find(Estado.class, id);
     }
 
     @Override
@@ -40,6 +36,9 @@ public class EstadoImpl implements EstadoRepository {
     @Transactional
     public void remover(Estado estado) {
         Estado estadoEncontrado = this.buscar(estado.getId());
+        if(estadoEncontrado == null){
+            throw new EmptyResultDataAccessException(1);
+        }
         manager.remove(estadoEncontrado);
     }
 }
