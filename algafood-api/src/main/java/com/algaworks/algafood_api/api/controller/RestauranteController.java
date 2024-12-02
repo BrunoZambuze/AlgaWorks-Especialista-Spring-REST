@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/restaurantes")
@@ -25,13 +26,13 @@ public class RestauranteController {
 
     @GetMapping
     public List<Restaurante> listar(){
-        return restauranteRepository.listar();
+        return restauranteRepository.findAll();
     }
 
     @GetMapping("/{restauranteId}")
     public ResponseEntity<Restaurante> buscar(@PathVariable Long restauranteId){
-        Restaurante restauranteEncontrado = restauranteRepository.buscar(restauranteId);
-        return restauranteEncontrado == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(restauranteEncontrado);
+        Optional<Restaurante> restauranteEncontrado = restauranteRepository.findById(restauranteId);
+        return restauranteEncontrado.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(restauranteEncontrado.get());
     }
 
     @PostMapping
@@ -71,6 +72,8 @@ public class RestauranteController {
         } catch (EntidadeNaoEncontradaException e){
             if("Restaurante".equals(e.getNomeEntidade())){
                 return ResponseEntity.notFound().build();
+            } else if("Cozinha".equals(e.getNomeEntidade())){
+                return ResponseEntity.badRequest().body(e.getMessage());
             } else {
                 return ResponseEntity.internalServerError().build();
             }

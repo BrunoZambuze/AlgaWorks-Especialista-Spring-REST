@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/estados")
@@ -24,13 +25,13 @@ public class EstadoController {
 
     @GetMapping
     public List<Estado> listar(){
-        return estadoRepository.listar();
+        return estadoRepository.findAll();
     }
 
     @GetMapping("/{estadoId}")
     public ResponseEntity<Estado> buscar(@PathVariable Long estadoId){
-        Estado estadoEncontrado = estadoRepository.buscar(estadoId);
-        return estadoEncontrado == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(estadoEncontrado);
+        Optional<Estado> estadoEncontrado = estadoRepository.findById(estadoId);
+        return estadoEncontrado.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(estadoEncontrado.get());
     }
 
     @PostMapping
@@ -47,7 +48,7 @@ public class EstadoController {
             return ResponseEntity.ok(estadoAtualizado);
         } catch (EntidadeNaoEncontradaException e) {
             if("Estado".equals(e.getNomeEntidade())){
-                return ResponseEntity.badRequest().body(e.getMessage());
+                return ResponseEntity.notFound().build();
             } else{
                 return ResponseEntity.internalServerError().build();
             }

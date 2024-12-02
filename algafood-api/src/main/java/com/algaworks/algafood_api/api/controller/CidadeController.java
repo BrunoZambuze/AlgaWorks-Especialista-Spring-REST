@@ -25,7 +25,7 @@ public class CidadeController {
 
     @GetMapping
     public List<Cidade> listar(){
-        return cidadeRepository.listar();
+        return cidadeRepository.findAll();
     }
 
     @GetMapping("/{cidadeId}")

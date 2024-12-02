@@ -26,61 +26,56 @@ public class CadastroRestauranteService {
 
     public Restaurante salvar(Restaurante restaurante){
         Long cozinhaId = restaurante.getCozinha().getId();
-        Cozinha cozinhaEncontrada = cozinhaRepository.buscar(cozinhaId);
-        if(cozinhaEncontrada == null){
-            throw new CozinhaNaoEncontradaException(String.format("Não existe cadastro de cozinha com o código %d", cozinhaId));
-        }
+        Cozinha cozinhaEncontrada = cozinhaRepository.findById(cozinhaId).orElseThrow(() -> new CozinhaNaoEncontradaException(String
+                                                            .format("Não existe cadastro de cozinha com o código %d", cozinhaId)));
+
         restaurante.setCozinha(cozinhaEncontrada);
-        return restauranteRepository.salvar(restaurante);
+        return restauranteRepository.save(restaurante);
     }
 
     public Restaurante atualizar(Long restauranteId,
                                  Restaurante restauranteAlterar){
-        Restaurante restauranteEncontrado = restauranteRepository.buscar(restauranteId);
+        Restaurante restauranteEncontrado = restauranteRepository.findById(restauranteId).orElseThrow(() ->
+                new RestauranteNaoEncontradoException(String.format("Não existe cadastro de restaurante com id %d", restauranteId)));
         Long cozinhaId = restauranteAlterar.getCozinha().getId();
-        Cozinha cozinhaEncontrada = cozinhaRepository.buscar(cozinhaId);
-
-        if(restauranteEncontrado == null){
-            throw new RestauranteNaoEncontradoException(String.format("Não existe cadastro de restaurante com id %d", restauranteId));
-        }
-        if(cozinhaEncontrada == null){
-            throw new CozinhaNaoEncontradaException(String.format("Não existe cadastro de cozinha com id %d", cozinhaId));
-        }
+        Cozinha cozinhaEncontrada = cozinhaRepository.findById(cozinhaId).orElseThrow(()
+                -> new CozinhaNaoEncontradaException(String.format("Não existe cadastro de cozinha com id %d", cozinhaId)));
 
         BeanUtils.copyProperties(restauranteAlterar, restauranteEncontrado, "id");
         restauranteEncontrado.setCozinha(cozinhaEncontrada);
 
-        restauranteEncontrado = restauranteRepository.salvar(restauranteEncontrado);
+        restauranteEncontrado = restauranteRepository.save(restauranteEncontrado);
         return restauranteEncontrado;
 
     }
 
     public Restaurante atualizarParcial(Long restauranteId, Map<String, Object> campos){
-        Restaurante restauranteEncontrado = restauranteRepository.buscar(restauranteId);
-        if(restauranteEncontrado == null){
-            throw new RestauranteNaoEncontradoException(String.format("Não existe cadastro de restaurante com id %d", restauranteId));
-        }
 
-        merge(campos, restauranteEncontrado);
+        Long cozinhaId;
 
-        return atualizar(restauranteId, restauranteEncontrado);
+        Restaurante restauranteEncontrado = restauranteRepository.findById(restauranteId).orElseThrow(()
+               -> new RestauranteNaoEncontradoException(String.format("Não foi encontrado nenhuma entidade restaurante com id %d", restauranteId)));
+
+       cozinhaId = restauranteEncontrado.getCozinha().getId();
+       Cozinha cozinhaEncontrada = cozinhaRepository.findById(cozinhaId).orElseThrow(()
+               -> new CozinhaNaoEncontradaException(String.format("Não existe um cadastro de cozinha com o código %d", cozinhaId)));
+
+       merge(campos, restauranteEncontrado);
+
+       return atualizar(restauranteId, restauranteEncontrado);
     }
 
     public void merge(Map<String, Object> campos, Restaurante restauranteAtual){
         ObjectMapper objectMapper = new ObjectMapper();
-        Restaurante restauranteOrigem = objectMapper.convertValue(campos, Restaurante.class);
+        Restaurante restauranteAlterar = objectMapper.convertValue(campos, Restaurante.class);
 
-        campos.forEach((nomePropriedade, valorCampo) -> {
+        campos.forEach((nomePropriedade, valorPropriedade) -> {
             Field fields = ReflectionUtils.findField(Restaurante.class, nomePropriedade);
             fields.setAccessible(true);
-
-            Object novoValor = ReflectionUtils.getField(fields, restauranteOrigem);
-
-            System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=" + nomePropriedade + " = " + valorCampo + " = " + novoValor + "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=");
-
+            Object novoValor = ReflectionUtils.getField(fields, restauranteAlterar);
             ReflectionUtils.setField(fields, restauranteAtual, novoValor);
-
         });
+
     }
 
 }
