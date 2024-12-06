@@ -1,9 +1,7 @@
 package com.algaworks.algafood_api.domain.repository;
 
 import com.algaworks.algafood_api.domain.model.Restaurante;
-import com.algaworks.algafood_api.infraestrutura.repository.RestauranteRepositoryQueries;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
