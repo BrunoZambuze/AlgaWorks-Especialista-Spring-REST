@@ -4,6 +4,7 @@ import com.algaworks.algafood_api.domain.model.Cozinha;
 import com.algaworks.algafood_api.domain.model.Restaurante;
 import com.algaworks.algafood_api.domain.repository.CozinhaRepository;
 import com.algaworks.algafood_api.domain.repository.RestauranteRepository;
+import com.algaworks.algafood_api.infraestrutura.repository.specification.RestauranteSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,6 +59,11 @@ public class TesteController {
                                                 @RequestParam(value = "inicial", required = false) BigDecimal freteInicial,
                                                 @RequestParam(value = "final", required = false)  BigDecimal freteFinal){
         return restauranteRepository.find(nome, freteInicial, freteFinal);
+    }
+
+    @GetMapping("/restaurantes/com-frete-gratis")
+    public List<Restaurante> buscarComFreteGratis(@RequestParam String nome){
+        return restauranteRepository.findComFreteGratis(nome);
     }
 
 }
