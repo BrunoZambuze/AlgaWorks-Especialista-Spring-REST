@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonRootName(value = "cozinha")
 @Entity
@@ -19,9 +21,12 @@ public class Cozinha {
     @EqualsAndHashCode.Include
     private Long id;
 
-//    @JsonIgnore
 //    @JsonProperty(value = "titulo")
     @Column(length = 30, nullable = false)
     private String nome;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "cozinha")
+    private List<Restaurante> restaurantes = new ArrayList<>();
 
 }
