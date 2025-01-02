@@ -18,16 +18,22 @@ import java.util.Map;
 @Service
 public class CadastroRestauranteService {
 
+    private static final String MSG_RESTAURANTE_NAO_ENCONTRADO = "Não existe cadastro de restaurante com id ";
+
     @Autowired
     private RestauranteRepository restauranteRepository;
 
     @Autowired
     private CozinhaRepository cozinhaRepository;
 
+    public Restaurante buscarOuFalhar(Long restauranteId){
+        return restauranteRepository.findById(restauranteId)
+                .orElseThrow(() -> new RestauranteNaoEncontradoException(MSG_RESTAURANTE_NAO_ENCONTRADO + restauranteId));
+    }
+
     public Restaurante salvar(Restaurante restaurante){
         Long cozinhaId = restaurante.getCozinha().getId();
-        Cozinha cozinhaEncontrada = cozinhaRepository.findById(cozinhaId).orElseThrow(() -> new CozinhaNaoEncontradaException(String
-                                                            .format("Não existe cadastro de cozinha com o código %d", cozinhaId)));
+        Cozinha cozinhaEncontrada = cozinhaRepository.findByIdOrElseThrowException(cozinhaId);
 
         restaurante.setCozinha(cozinhaEncontrada);
         return restauranteRepository.save(restaurante);
@@ -35,11 +41,9 @@ public class CadastroRestauranteService {
 
     public Restaurante atualizar(Long restauranteId,
                                  Restaurante restauranteAlterar){
-        Restaurante restauranteEncontrado = restauranteRepository.findById(restauranteId).orElseThrow(() ->
-                new RestauranteNaoEncontradoException(String.format("Não existe cadastro de restaurante com id %d", restauranteId)));
+        Restaurante restauranteEncontrado = buscarOuFalhar(restauranteId);
         Long cozinhaId = restauranteAlterar.getCozinha().getId();
-        Cozinha cozinhaEncontrada = cozinhaRepository.findById(cozinhaId).orElseThrow(()
-                -> new CozinhaNaoEncontradaException(String.format("Não existe cadastro de cozinha com id %d", cozinhaId)));
+        Cozinha cozinhaEncontrada = cozinhaRepository.findByIdOrElseThrowException(cozinhaId);
 
         BeanUtils.copyProperties(restauranteAlterar, restauranteEncontrado, "id", "formasPagamento", "endereco", "dataCadastro", "produtos");
         restauranteEncontrado.setCozinha(cozinhaEncontrada);
@@ -53,12 +57,10 @@ public class CadastroRestauranteService {
 
         Long cozinhaId;
 
-        Restaurante restauranteEncontrado = restauranteRepository.findById(restauranteId).orElseThrow(()
-               -> new RestauranteNaoEncontradoException(String.format("Não foi encontrado nenhuma entidade restaurante com id %d", restauranteId)));
+        Restaurante restauranteEncontrado = buscarOuFalhar(restauranteId);
 
        cozinhaId = restauranteEncontrado.getCozinha().getId();
-       Cozinha cozinhaEncontrada = cozinhaRepository.findById(cozinhaId).orElseThrow(()
-               -> new CozinhaNaoEncontradaException(String.format("Não existe um cadastro de cozinha com o código %d", cozinhaId)));
+       Cozinha cozinhaEncontrada = cozinhaRepository.findByIdOrElseThrowException(cozinhaId);
 
        merge(campos, restauranteEncontrado);
 

@@ -1,5 +1,6 @@
 package com.algaworks.algafood_api.infraestrutura.repository;
 
+import com.algaworks.algafood_api.domain.exception.RestauranteNaoEncontradoException;
 import com.algaworks.algafood_api.domain.model.Restaurante;
 import com.algaworks.algafood_api.domain.repository.RestauranteRepository;
 import com.algaworks.algafood_api.domain.repository.RestauranteRepositoryQueries;
