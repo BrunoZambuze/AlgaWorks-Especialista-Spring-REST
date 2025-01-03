@@ -2,7 +2,6 @@ package com.algaworks.algafood_api.api.controller;
 
 import com.algaworks.algafood_api.domain.exception.CidadeNaoEncontradaException;
 import com.algaworks.algafood_api.domain.exception.EntidadeNaoEncontradaException;
-import com.algaworks.algafood_api.domain.exception.EstadoNaoEncontradoException;
 import com.algaworks.algafood_api.domain.model.Cidade;
 import com.algaworks.algafood_api.domain.repository.CidadeRepository;
 import com.algaworks.algafood_api.domain.service.CadastroCidadeService;

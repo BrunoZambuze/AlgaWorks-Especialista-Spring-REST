@@ -1,6 +1,5 @@
 package com.algaworks.algafood_api.domain.service;
 
-import com.algaworks.algafood_api.domain.exception.CozinhaNaoEncontradaException;
 import com.algaworks.algafood_api.domain.exception.RestauranteNaoEncontradoException;
 import com.algaworks.algafood_api.domain.model.Cozinha;
 import com.algaworks.algafood_api.domain.model.Restaurante;
@@ -26,6 +25,7 @@ public class CadastroRestauranteService {
     @Autowired
     private CozinhaRepository cozinhaRepository;
 
+
     public Restaurante buscarOuFalhar(Long restauranteId){
         return restauranteRepository.findById(restauranteId)
                 .orElseThrow(() -> new RestauranteNaoEncontradoException(MSG_RESTAURANTE_NAO_ENCONTRADO + restauranteId));
@@ -35,7 +35,9 @@ public class CadastroRestauranteService {
         Long cozinhaId = restaurante.getCozinha().getId();
         Cozinha cozinhaEncontrada = cozinhaRepository.findByIdOrElseThrowException(cozinhaId);
 
+
         restaurante.setCozinha(cozinhaEncontrada);
+
         return restauranteRepository.save(restaurante);
     }
 
