@@ -1,7 +1,6 @@
 package com.algaworks.algafood_api.domain.service;
 
 import com.algaworks.algafood_api.domain.exception.EntidadeEmUsoException;
-import com.algaworks.algafood_api.domain.exception.EstadoNaoEncontradoException;
 import com.algaworks.algafood_api.domain.model.Estado;
 import com.algaworks.algafood_api.domain.repository.EstadoRepository;
 import org.springframework.beans.BeanUtils;
@@ -21,8 +20,7 @@ public class CadastroEstadoService {
 
     public Estado atualizar(Long estadoId, Estado estadoAlterar){
 
-            Estado estadoEncontrado = estadoRepository.findById(estadoId).orElseThrow(()
-                    -> new EstadoNaoEncontradoException(String.format("Não existe cadastro de estado com o id %d", estadoId)));
+            Estado estadoEncontrado = estadoRepository.findByIdOrElseThrowException(estadoId);
 
             BeanUtils.copyProperties(estadoAlterar, estadoEncontrado, "id");
             estadoEncontrado = estadoRepository.save(estadoEncontrado);
@@ -32,12 +30,10 @@ public class CadastroEstadoService {
 
     public void remover(Long estadoId){
         try{
-            if(!estadoRepository.existsById(estadoId)){
-                throw new EstadoNaoEncontradoException(String.format("Não existe cadastro de estado com o id %d", estadoId));
-            }
+            estadoRepository.findByIdOrElseThrowException(estadoId);
             estadoRepository.deleteById(estadoId);
         } catch (DataIntegrityViolationException e) {
-            throw new EntidadeEmUsoException(String.format("Entidade com id %d não pode ser removida, pois está em uso", estadoId));
+            throw new EntidadeEmUsoException("Não é possível remover o estado com id " + estadoId + " pois está sendo utilizado por outra classe");
         }
     }
 

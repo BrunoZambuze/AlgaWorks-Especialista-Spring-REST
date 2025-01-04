@@ -4,6 +4,6 @@ import com.algaworks.algafood_api.domain.model.Estado;
 
 public interface EstadoRepositoryQueries {
 
-    Estado findByEstadoOrElseThrowException(Long estadoId);
+    Estado findByIdOrElseThrowException(Long estadoId);
 
 }

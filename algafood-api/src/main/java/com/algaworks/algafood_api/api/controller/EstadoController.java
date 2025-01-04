@@ -29,9 +29,8 @@ public class EstadoController {
     }
 
     @GetMapping("/{estadoId}")
-    public ResponseEntity<Estado> buscar(@PathVariable Long estadoId){
-        Optional<Estado> estadoEncontrado = estadoRepository.findById(estadoId);
-        return estadoEncontrado.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(estadoEncontrado.get());
+    public Estado buscar(@PathVariable Long estadoId){
+        return estadoRepository.findByIdOrElseThrowException(estadoId);
     }
 
     @PostMapping
@@ -41,35 +40,15 @@ public class EstadoController {
     }
 
     @PutMapping("/{estadoId}")
-    public ResponseEntity<?> atualizar(@PathVariable Long estadoId,
-                                       @RequestBody Estado estadoAlterado){
-        try{
-            Estado estadoAtualizado = estadoService.atualizar(estadoId, estadoAlterado);
-            return ResponseEntity.ok(estadoAtualizado);
-        } catch (EntidadeNaoEncontradaException e) {
-            if("Estado".equals(e.getNomeEntidade())){
-                return ResponseEntity.notFound().build();
-            } else{
-                return ResponseEntity.internalServerError().build();
-            }
-        }
+    public Estado atualizar(@PathVariable Long estadoId,
+                            @RequestBody Estado estadoAlterado){
+        return estadoService.atualizar(estadoId, estadoAlterado);
     }
 
     @DeleteMapping("/{estadoId}")
-    public ResponseEntity<?> deletar(@PathVariable Long estadoId){
-        try{
-            estadoService.remover(estadoId);
-            return ResponseEntity.noContent().build();
-        } catch (EntidadeNaoEncontradaException e){
-            if("Estado".equals(e.getNomeEntidade())){
-                return ResponseEntity.notFound().build();
-            }
-            else{
-                return ResponseEntity.internalServerError().build();
-            }
-        } catch (EntidadeEmUsoException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletar(@PathVariable Long estadoId){
+        estadoService.remover(estadoId);
     }
 
 }
