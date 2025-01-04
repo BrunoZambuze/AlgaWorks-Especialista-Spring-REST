@@ -6,6 +6,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class EstadoNaoEncontradoException extends EntidadeNaoEncontradaException{
     public EstadoNaoEncontradoException(String message) {
-        super("Estado", message);
+        super(message);
     }
+
+    public EstadoNaoEncontradoException(Long estadoId){
+        this(String.format("Não foi encontrado nenhum estado com id %d", estadoId));
+    }
+
 }

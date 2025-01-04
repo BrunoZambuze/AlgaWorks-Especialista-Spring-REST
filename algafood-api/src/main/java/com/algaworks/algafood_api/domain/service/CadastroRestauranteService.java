@@ -17,8 +17,6 @@ import java.util.Map;
 @Service
 public class CadastroRestauranteService {
 
-    private static final String MSG_RESTAURANTE_NAO_ENCONTRADO = "Não existe cadastro de restaurante com id ";
-
     @Autowired
     private RestauranteRepository restauranteRepository;
 
@@ -28,7 +26,7 @@ public class CadastroRestauranteService {
 
     public Restaurante buscarOuFalhar(Long restauranteId){
         return restauranteRepository.findById(restauranteId)
-                .orElseThrow(() -> new RestauranteNaoEncontradoException(MSG_RESTAURANTE_NAO_ENCONTRADO + restauranteId));
+                .orElseThrow(() -> new RestauranteNaoEncontradoException(restauranteId));
     }
 
     public Restaurante salvar(Restaurante restaurante){

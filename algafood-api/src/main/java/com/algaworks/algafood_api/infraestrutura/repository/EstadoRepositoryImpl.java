@@ -18,7 +18,7 @@ public class EstadoRepositoryImpl implements EstadoRepositoryQueries {
     public Estado findByIdOrElseThrowException(Long estadoId) {
         Estado estado = entityManager.find(Estado.class, estadoId);
         if(estado == null){
-            throw new EstadoNaoEncontradoException("Não foi encontrado nenhum estado com id " + estadoId);
+            throw new EstadoNaoEncontradoException(estadoId);
         }
         return estado;
     }

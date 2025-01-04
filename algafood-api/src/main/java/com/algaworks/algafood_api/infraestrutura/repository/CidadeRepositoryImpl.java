@@ -18,7 +18,7 @@ public class CidadeRepositoryImpl implements CidadeRepositoryQueries {
     public Cidade findByIdOrElseThrowException(Long cidadeId){
         Cidade cidade = entityManager.find(Cidade.class, cidadeId);
         if(cidade == null){
-            throw new CidadeNaoEncontradaException("Não foi encontrada nenhuma cidade com id " + cidadeId);
+            throw new CidadeNaoEncontradaException(cidadeId);
         }
         return cidade;
     }

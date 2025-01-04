@@ -18,7 +18,7 @@ public class CozinhaRepositoryImpl implements CozinhaRepositoryQueries {
     @Override
     public Cozinha findByIdOrElseThrowException(Long cozinhaId){
         return cozinhaRepository.findById(cozinhaId)
-                .orElseThrow(() -> new CozinhaNaoEncontradaException("Não existe cadastro de cozinha com id " + cozinhaId));
+                .orElseThrow(() -> new CozinhaNaoEncontradaException(cozinhaId));
     }
 
 }

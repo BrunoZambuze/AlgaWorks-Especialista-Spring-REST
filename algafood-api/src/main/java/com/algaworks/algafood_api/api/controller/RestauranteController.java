@@ -1,4 +1,6 @@
 package com.algaworks.algafood_api.api.controller;
+import com.algaworks.algafood_api.domain.exception.CozinhaNaoEncontradaException;
+import com.algaworks.algafood_api.domain.exception.NegocioException;
 import com.algaworks.algafood_api.domain.model.Restaurante;
 import com.algaworks.algafood_api.domain.repository.RestauranteRepository;
 import com.algaworks.algafood_api.domain.service.CadastroRestauranteService;
@@ -33,20 +35,28 @@ public class RestauranteController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Restaurante adicionar(@RequestBody Restaurante restaurante){
-        return restauranteService.salvar(restaurante);
+        try{
+            return restauranteService.salvar(restaurante);
+        }catch (CozinhaNaoEncontradaException e){
+            throw new NegocioException(e.getMessage());
+        }
     }
 
     @PutMapping("/{restauranteId}")
     @ResponseStatus(HttpStatus.OK)
     public Restaurante atualizar(@PathVariable Long restauranteId,
                                  @RequestBody Restaurante restaurante){
-        return restauranteService.atualizar(restauranteId, restaurante);
+        try{
+            return restauranteService.atualizar(restauranteId, restaurante);
+        }catch (CozinhaNaoEncontradaException e){
+            throw new NegocioException(e.getMessage());
+        }
     }
 
     @PatchMapping("/{restauranteId}")
     @ResponseStatus(HttpStatus.OK)
     public Restaurante atualizarParcial(@PathVariable Long restauranteId,
-                                              @RequestBody Map<String, Object> campos){
+                                        @RequestBody Map<String, Object> campos){
         return restauranteService.atualizarParcial(restauranteId, campos);
     }
 
