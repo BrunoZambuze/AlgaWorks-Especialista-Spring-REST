@@ -1,6 +1,5 @@
 package com.algaworks.algafood_api.api.exceptionhandler;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
