@@ -4,6 +4,7 @@ import com.algaworks.algafood_api.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood_api.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood_api.domain.exception.NegocioException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,9 +13,12 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -26,6 +30,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         if(rootCause instanceof InvalidFormatException){
             return handleInvalidFormatException((InvalidFormatException) rootCause, headers, status, webRequest);
+        } else if(rootCause instanceof PropertyBindingException){
+            return handlePropertyBindingException((PropertyBindingException) rootCause, headers, status, webRequest);
         }
 
         ProblemType problemType = ProblemType.MENSAGEM_INCOMPREESIVEL;
@@ -38,15 +44,26 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpHeaders headers, HttpStatus status, WebRequest webRequest){
 
-        String path = ex.getPath().stream()
-                      .map(ref -> ref.getFieldName())
-                      .collect(Collectors.joining("."));
+        String path = joinPath(ex.getPath());
 
         ProblemType problemType = ProblemType.MENSAGEM_INCOMPREESIVEL;
         String detail = String.format("A propriedade %s recebeu o valor '%s', que é de um tipo inválido. Corrija e informe " +
                 "um valor compatível com o tipo '%s'", path, ex.getValue(), ex.getTargetType().getSimpleName());
         Problem problem = this.createProblemBuilder(status, problemType, detail).build();
 
+        return this.handleExceptionInternal(ex, problem, headers, status, webRequest);
+    }
+
+    private ResponseEntity<Object> handlePropertyBindingException(PropertyBindingException ex, HttpHeaders headers,
+                                                                       HttpStatus status, WebRequest webRequest){
+
+        String path = joinPath(ex.getPath());
+        ProblemType problemType = ProblemType.MENSAGEM_INCOMPREESIVEL;
+        String detail = String.format("Erro ao inserir dados na propriedade '%s'! Ela não existe no contexto da classe '%s'." +
+                                    " Corrija ou remova e tente novamente",
+                                    path, ex.getReferringClass().getSimpleName());
+
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
         return this.handleExceptionInternal(ex, problem, headers, status, webRequest);
     }
 
@@ -105,6 +122,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .type(problemType.getUri())
                 .title(problemType.getTitle())
                 .detail(detail);
+    }
+
+    private String joinPath(List<Reference> references){
+        return references.stream().map(ref -> ref.getFieldName())
+                .collect(Collectors.joining("."));
     }
 
 }
