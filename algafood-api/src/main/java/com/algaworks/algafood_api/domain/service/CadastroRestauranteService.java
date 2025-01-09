@@ -60,7 +60,6 @@ public class CadastroRestauranteService {
         Restaurante restauranteEncontrado = buscarOuFalhar(restauranteId);
 
        cozinhaId = restauranteEncontrado.getCozinha().getId();
-       Cozinha cozinhaEncontrada = cozinhaRepository.findByIdOrElseThrowException(cozinhaId);
 
        merge(campos, restauranteEncontrado);
 
