@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @JsonInclude(JsonInclude.Include.NON_NULL) //Incluir na representação as propriedades que não estiverem nulas
 @Getter
 @Builder // Padrão de projeto Builder
@@ -14,4 +16,6 @@ public class Problem {
     private String title;
     private String detail;
 
+    private String uiMessage;
+    private LocalDateTime timestamp;
 }
