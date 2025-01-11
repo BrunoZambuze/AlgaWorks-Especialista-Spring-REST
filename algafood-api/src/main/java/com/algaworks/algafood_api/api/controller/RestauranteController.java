@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -56,8 +57,9 @@ public class RestauranteController {
     @PatchMapping("/{restauranteId}")
     @ResponseStatus(HttpStatus.OK)
     public Restaurante atualizarParcial(@PathVariable Long restauranteId,
-                                        @RequestBody Map<String, Object> campos){
-        return restauranteService.atualizarParcial(restauranteId, campos);
+                                        @RequestBody Map<String, Object> campos,
+                                        HttpServletRequest request){
+        return restauranteService.atualizarParcial(restauranteId, campos, request);
     }
 
 }
