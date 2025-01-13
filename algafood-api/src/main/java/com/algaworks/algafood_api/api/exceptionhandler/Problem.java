@@ -22,10 +22,4 @@ public class Problem {
 
     private List<Field> fields;
 
-    @Getter
-    @Builder
-    public static class Field{
-        private String name;
-        private String uiMessage;
-    }
 }

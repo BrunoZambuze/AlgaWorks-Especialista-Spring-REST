@@ -1,5 +1,6 @@
 package com.algaworks.algafood_api.domain.model;
 
+import com.algaworks.algafood_api.Groups;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,7 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,14 +25,20 @@ public class Restaurante {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @NotNull
+//    @NotNull
+//    @NotEmpty
+    @NotBlank(groups = Groups.CadastroRestaurante.class)
     @Column(length = 30, nullable = false)
     private String nome;
 
+//    @DecimalMin("0")
+    @PositiveOrZero(groups = Groups.CadastroRestaurante.class)
     @Column(nullable = false)
     private BigDecimal taxaFrete;
 
 //    @JsonIgnore
+    @NotNull(groups = Groups.CadastroRestaurante.class)
+    @Valid
     @ManyToOne//(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Cozinha cozinha;
