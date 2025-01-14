@@ -1,5 +1,4 @@
 package com.algaworks.algafood_api.api.controller;
-import com.algaworks.algafood_api.Groups;
 import com.algaworks.algafood_api.domain.exception.CozinhaNaoEncontradaException;
 import com.algaworks.algafood_api.domain.exception.NegocioException;
 import com.algaworks.algafood_api.domain.model.Restaurante;
@@ -7,7 +6,6 @@ import com.algaworks.algafood_api.domain.repository.RestauranteRepository;
 import com.algaworks.algafood_api.domain.service.CadastroRestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +36,7 @@ public class RestauranteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Restaurante adicionar(@RequestBody @Validated(Groups.CadastroRestaurante.class) Restaurante restaurante){
+    public Restaurante adicionar(@RequestBody @Valid Restaurante restaurante){
         try{
             return restauranteService.salvar(restaurante);
         }catch (CozinhaNaoEncontradaException e){
@@ -49,7 +47,7 @@ public class RestauranteController {
     @PutMapping("/{restauranteId}")
     @ResponseStatus(HttpStatus.OK)
     public Restaurante atualizar(@PathVariable Long restauranteId,
-                                 @RequestBody Restaurante restaurante){
+                                 @RequestBody @Valid Restaurante restaurante){
         try{
             return restauranteService.atualizar(restauranteId, restaurante);
         }catch (CozinhaNaoEncontradaException e){
