@@ -35,6 +35,7 @@ public class Restaurante {
 
 //    @DecimalMin("0")
     @PositiveOrZero
+    @NotNull
     @Column(nullable = false)
     private BigDecimal taxaFrete;
 
