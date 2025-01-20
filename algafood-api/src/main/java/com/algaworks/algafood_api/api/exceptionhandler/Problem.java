@@ -20,6 +20,6 @@ public class Problem {
     private String uiMessage;
     private LocalDateTime timestamp;
 
-    private List<Field> fields;
+    private List<ObjectHandler> objects;
 
 }

@@ -39,7 +39,6 @@ public class Restaurante {
 
 //    @DecimalMin("0")
 //    @PositiveOrZero
-
     @TaxaFrete
     @NotNull
 //    @Multiplo(numero = 5)

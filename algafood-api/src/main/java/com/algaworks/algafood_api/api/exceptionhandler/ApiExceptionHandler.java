@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -96,13 +97,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         BindingResult bindingResult = ex.getBindingResult();
 
-        List<Field> problemFields = bindingResult.getFieldErrors()
+        List<ObjectHandler> problemObjectHandlers = bindingResult.getAllErrors()
                 .stream()
-                .map(fieldError -> {
-                    String message = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
+                .map(objectError -> {
+                    String message = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
 
-                    return Field.builder()
-                            .name(fieldError.getField())
+                    String name = objectError.getObjectName();
+
+                    if(objectError instanceof FieldError){
+                        name = ((FieldError) objectError).getField();
+                    }
+
+                    return ObjectHandler.builder()
+                            .name(name)
                             .uiMessage(message)
                             .build();
                 })
@@ -110,7 +117,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         Problem problem = createProblemBuilder(status, problemType, detail)
                 .uiMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
-                .fields(problemFields)
+                .objects(problemObjectHandlers)
                 .build();
         return handleExceptionInternal(ex, problem, headers, status, request);
     }

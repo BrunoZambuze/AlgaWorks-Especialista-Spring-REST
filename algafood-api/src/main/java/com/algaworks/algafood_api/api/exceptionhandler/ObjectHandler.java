@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class Field {
+public class ObjectHandler {
 
     private String name;
     private String uiMessage;
