@@ -7,7 +7,6 @@ import com.algaworks.algafood_api.domain.repository.CozinhaRepository;
 import com.algaworks.algafood_api.domain.repository.RestauranteRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.SmartValidator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
@@ -28,7 +28,6 @@ public class CadastroRestauranteService {
 
     @Autowired
     private CozinhaRepository cozinhaRepository;
-
 
     public Restaurante buscarOuFalhar(Long restauranteId){
         return restauranteRepository.findById(restauranteId)
@@ -72,7 +71,7 @@ public class CadastroRestauranteService {
        return atualizar(restauranteId, restauranteEncontrado);
     }
 
-    public void merge(Map<String, Object> campos, Restaurante restauranteAtual, HttpServletRequest request){
+    private void merge(Map<String, Object> campos, Restaurante restauranteAtual, HttpServletRequest request){
         ObjectMapper objectMapper = new ObjectMapper();
         ServletServerHttpRequest serverHttpRequest = new ServletServerHttpRequest(request);
         try{
