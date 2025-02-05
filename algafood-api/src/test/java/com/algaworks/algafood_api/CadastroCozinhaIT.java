@@ -7,7 +7,9 @@ import com.algaworks.algafood_api.domain.service.CadastroCozinhaService;
 import com.algaworks.algafood_api.domain.service.CadastroRestauranteService;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -82,17 +84,34 @@ class CadastroCozinhaIT {
     @LocalServerPort //Essa anotação irá capturar a porta aleatória que o nosso WebEnvironment utilizou para subir o servidor e irá jogar para a variável
     private int randomPort;
 
+    @BeforeEach //Será um método de preparação. Ele será ativado em cada um dos métodos de teste
+    public void setUp(){
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+        RestAssured.port = randomPort;
+        RestAssured.basePath = "/cozinhas";
+    }
+
     @Test
     public void deveRetornarStatus200_QuandoConsultarCozinhas(){
         RestAssured
-           .given()
-                .basePath("/cozinhas")
-                .port(randomPort)
-                .accept(ContentType.JSON)
-           .when()
-                .get()
-           .then()
-                .statusCode(HttpStatus.OK.value());
+                .given()
+                    .accept(ContentType.JSON)
+                .when()
+                    .get()
+                .then()
+                    .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    public void deveConter4Cozinhas_QuandoConsultarCozinhas(){
+        RestAssured
+                .given()
+                    .accept(ContentType.JSON)
+                .when()
+                    .get()
+                .then()
+                    .body("id", Matchers.hasSize(4)) //Verifica se tem 4 itens
+                    .body("nome", Matchers.hasItems("Brasileira", "Argentina")); //Verifica se tem as cozinhas: Brasileira e Argentina
     }
 
 }
