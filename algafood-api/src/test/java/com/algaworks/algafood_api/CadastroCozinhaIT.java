@@ -3,6 +3,7 @@ package com.algaworks.algafood_api;
 import com.algaworks.algafood_api.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood_api.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood_api.domain.model.Cozinha;
+import com.algaworks.algafood_api.domain.repository.CozinhaRepository;
 import com.algaworks.algafood_api.domain.service.CadastroCozinhaService;
 import com.algaworks.algafood_api.domain.service.CadastroRestauranteService;
 import io.restassured.RestAssured;
@@ -17,9 +18,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
+import util.ResourceUtils;
+
 import static org.hamcrest.Matchers.equalTo;
 
 import javax.validation.ConstraintViolationException;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -93,6 +98,14 @@ class CadastroCozinhaIT {
     @Autowired
     private Flyway flyway;
 
+    @Autowired
+    private CozinhaRepository cozinhaRepository;
+
+    private static int quantidadeTotalDeCozinhas;
+    private static final int COZINHA_ID_INEXISTENTE = 1000;
+    private static final int COZINHA_ID_EXISTENTE = 2;
+    private static String jsonCorretoCozinhaChinesa;
+
     @BeforeEach //Será um método de preparação. Ele será ativado em cada um dos métodos de teste
     public void setUp(){
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
@@ -100,6 +113,8 @@ class CadastroCozinhaIT {
         RestAssured.basePath = "/cozinhas";
 
         flyway.migrate();
+
+        getQuantidadeTotalDeCozinhas();
     }
 
     @Test
@@ -114,22 +129,24 @@ class CadastroCozinhaIT {
     }
 
     @Test
-    public void deveConter4Cozinhas_QuandoConsultarCozinhas(){
+    public void deveRetornarQuantidadeCorretaDeCozinhas_QuandoConsultarCozinhas(){
         RestAssured
                 .given()
                     .accept(ContentType.JSON)
                 .when()
                     .get()
                 .then()
-                    .body("id", Matchers.hasSize(4)) //Verifica se tem 4 itens
+                    .body("id", Matchers.hasSize(quantidadeTotalDeCozinhas)) //Verifica se tem 4 itens
                     .body("nome", Matchers.hasItems("Brasileira", "Argentina")); //Verifica se tem as cozinhas: Brasileira e Argentina
     }
 
     @Test
     public void deveRetornarStatus201_QuandoCadastrarCozinha(){
+        jsonCorretoCozinhaChinesa = ResourceUtils.getConteudoDoRecurso("/json/correto/cozinha-chinesa.json");
+
         RestAssured
                 .given()
-                    .body("{ \"nome\": \"Portuguesa\"}")
+                    .body(jsonCorretoCozinhaChinesa)
                     .contentType(ContentType.JSON)
                     .accept(ContentType.JSON)
                 .when()
@@ -142,7 +159,7 @@ class CadastroCozinhaIT {
     public void deveRetornarRespostaEStatusCorreto_QuandoConsultarCozinhaExistente(){
         RestAssured
                 .given()
-                    .pathParam("cozinhaId", 2)
+                    .pathParam("cozinhaId", COZINHA_ID_EXISTENTE)
                     .accept(ContentType.JSON)
                 .when()
                     .get("/{cozinhaId}")
@@ -155,12 +172,17 @@ class CadastroCozinhaIT {
     public void deveRetornarStatus404_QuandoConsultarCozinhaInexistente(){
         RestAssured
                 .given()
-                    .pathParam("cozinhaId", 300)
+                    .pathParam("cozinhaId", COZINHA_ID_INEXISTENTE)
                     .accept(ContentType.JSON)
                 .when()
                     .get("/{cozinhaId}")
                 .then()
                     .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
+    private void getQuantidadeTotalDeCozinhas(){
+        List<Cozinha> listaCozinhas = cozinhaRepository.findAll();
+        quantidadeTotalDeCozinhas = listaCozinhas.size();
     }
 
 }
