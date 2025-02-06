@@ -7,6 +7,7 @@ import com.algaworks.algafood_api.domain.service.CadastroCozinhaService;
 import com.algaworks.algafood_api.domain.service.CadastroRestauranteService;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.flywaydb.core.Flyway;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.TestPropertySource;
+import static org.hamcrest.Matchers.equalTo;
 
 import javax.validation.ConstraintViolationException;
 
@@ -22,6 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) //Nosso teste da API precisa de um servidor para funcionar, por isso vamos utilizar
             // o WebEnvironment.RANDOM_PORT para subir um servidor em uma porta aleatória
+@TestPropertySource("/application-test.properties") //A aplicação rodará o 'application.properties' e juntará com o 'application-test.properties'. As propriedades
+                                                   //que forem diferentes em ambos os arquivos irão se manter e as propriedades "iguais" serão sobrescrevidas pelo
+                                                  //'application-teste.properties'.
 class CadastroCozinhaIT {
 
     //TESTE DE INTEGRAÇÃO
@@ -84,11 +90,16 @@ class CadastroCozinhaIT {
     @LocalServerPort //Essa anotação irá capturar a porta aleatória que o nosso WebEnvironment utilizou para subir o servidor e irá jogar para a variável
     private int randomPort;
 
+    @Autowired
+    private Flyway flyway;
+
     @BeforeEach //Será um método de preparação. Ele será ativado em cada um dos métodos de teste
     public void setUp(){
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         RestAssured.port = randomPort;
         RestAssured.basePath = "/cozinhas";
+
+        flyway.migrate();
     }
 
     @Test
@@ -112,6 +123,44 @@ class CadastroCozinhaIT {
                 .then()
                     .body("id", Matchers.hasSize(4)) //Verifica se tem 4 itens
                     .body("nome", Matchers.hasItems("Brasileira", "Argentina")); //Verifica se tem as cozinhas: Brasileira e Argentina
+    }
+
+    @Test
+    public void deveRetornarStatus201_QuandoCadastrarCozinha(){
+        RestAssured
+                .given()
+                    .body("{ \"nome\": \"Portuguesa\"}")
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                .when()
+                    .post()
+                .then()
+                    .statusCode(HttpStatus.CREATED.value());
+    }
+
+    @Test
+    public void deveRetornarRespostaEStatusCorreto_QuandoConsultarCozinhaExistente(){
+        RestAssured
+                .given()
+                    .pathParam("cozinhaId", 2)
+                    .accept(ContentType.JSON)
+                .when()
+                    .get("/{cozinhaId}")
+                .then()
+                    .statusCode(HttpStatus.OK.value())
+                    .body("nome", equalTo("Indiana"));
+    }
+
+    @Test
+    public void deveRetornarStatus404_QuandoConsultarCozinhaInexistente(){
+        RestAssured
+                .given()
+                    .pathParam("cozinhaId", 300)
+                    .accept(ContentType.JSON)
+                .when()
+                    .get("/{cozinhaId}")
+                .then()
+                    .statusCode(HttpStatus.NOT_FOUND.value());
     }
 
 }
