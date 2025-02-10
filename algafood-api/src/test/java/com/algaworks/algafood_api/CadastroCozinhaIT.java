@@ -1,16 +1,11 @@
 package com.algaworks.algafood_api;
 
-import com.algaworks.algafood_api.domain.exception.EntidadeEmUsoException;
-import com.algaworks.algafood_api.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood_api.domain.model.Cozinha;
 import com.algaworks.algafood_api.domain.repository.CozinhaRepository;
-import com.algaworks.algafood_api.domain.service.CadastroCozinhaService;
-import com.algaworks.algafood_api.domain.service.CadastroRestauranteService;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.flywaydb.core.Flyway;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +16,6 @@ import org.springframework.test.context.TestPropertySource;
 import util.ResourceUtils;
 
 import static org.hamcrest.Matchers.equalTo;
-
-import javax.validation.ConstraintViolationException;
 
 import java.util.List;
 
