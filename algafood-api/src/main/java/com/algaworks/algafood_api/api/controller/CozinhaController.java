@@ -11,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -39,12 +40,14 @@ public class CozinhaController {
         return cozinhaService.buscarOuFalhar(cozinhaId);
     }
 
+    @Transactional
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Cozinha adicionar(@RequestBody @Valid Cozinha cozinha){
         return cozinhaService.salvar(cozinha);
     }
 
+    @Transactional
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{cozinhaId}")
     public Cozinha atualizar(@PathVariable Long cozinhaId,
@@ -54,6 +57,7 @@ public class CozinhaController {
         return cozinhaService.salvar(cozinhaEncontrada);
     }
 
+    @Transactional
     @DeleteMapping("/{cozinhaId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletar(@PathVariable Long cozinhaId){

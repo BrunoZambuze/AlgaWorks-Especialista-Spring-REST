@@ -38,7 +38,6 @@ public class CadastroRestauranteService {
         Long cozinhaId = restaurante.getCozinha().getId();
         Cozinha cozinhaEncontrada = cozinhaRepository.findByIdOrElseThrowException(cozinhaId);
 
-
         restaurante.setCozinha(cozinhaEncontrada);
 
         return restauranteRepository.save(restaurante);

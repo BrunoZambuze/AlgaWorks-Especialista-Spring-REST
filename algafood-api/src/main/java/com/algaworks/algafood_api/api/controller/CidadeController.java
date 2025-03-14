@@ -7,6 +7,7 @@ import com.algaworks.algafood_api.domain.repository.CidadeRepository;
 import com.algaworks.algafood_api.domain.service.CadastroCidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,6 +33,7 @@ public class CidadeController {
         return cidadeRepository.findByIdOrElseThrowException(cidadeId);
     }
 
+    @Transactional
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Cidade adicionar(@RequestBody @Valid Cidade cidade){
@@ -42,6 +44,7 @@ public class CidadeController {
         }
     }
 
+    @Transactional
     @PutMapping("/{cidadeId}")
     public Cidade atualizar(@PathVariable Long cidadeId,
                             @RequestBody @Valid Cidade cidadeAlterar){
@@ -52,6 +55,7 @@ public class CidadeController {
         }
     }
 
+    @Transactional
     @DeleteMapping("/{cidadeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletar(@PathVariable Long cidadeId){
