@@ -1,8 +1,10 @@
 package com.algaworks.algafood_api.api.assembler;
 
-import com.algaworks.algafood_api.api.model.representationmodel.CozinhaModel;
 import com.algaworks.algafood_api.api.model.representationmodel.RestauranteModel;
 import com.algaworks.algafood_api.domain.model.Restaurante;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,27 +14,19 @@ import java.util.stream.Collectors;
     Assim podemos utilizar os métodos em outros controladores sem ficar repetindo código.
  */
 
-public final class RestauranteModelAssembler {
+@Component
+public class RestauranteModelAssembler {
 
-    public static RestauranteModel toModel(Restaurante restaurante){
+    @Autowired
+    private ModelMapper modelMapper;
 
-        CozinhaModel cozinhaModel = new CozinhaModel();
-        cozinhaModel.setId(restaurante.getCozinha().getId());
-        cozinhaModel.setNome(restaurante.getCozinha().getNome());
-
-        RestauranteModel restauranteModel = new RestauranteModel();
-        restauranteModel.setId(restaurante.getId());
-        restauranteModel.setNome(restaurante.getNome());
-        restauranteModel.setTaxaFrete(restaurante.getTaxaFrete());
-        restauranteModel.setCozinha(cozinhaModel);
-
-        return restauranteModel;
-
+    public RestauranteModel toModel(Restaurante restaurante){
+        return modelMapper.map(restaurante, RestauranteModel.class);
     }
 
-    public static List<RestauranteModel> toCollectionModel(List<Restaurante> restaurantes){
+    public List<RestauranteModel> toCollectionModel(List<Restaurante> restaurantes){
         return restaurantes.stream()
-                .map(RestauranteModelAssembler::toModel)
+                .map(this::toModel)
                 .collect(Collectors.toList());
     }
 

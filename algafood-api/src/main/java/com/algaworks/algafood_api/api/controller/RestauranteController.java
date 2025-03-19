@@ -28,9 +28,15 @@ public class RestauranteController {
     @Autowired
     private CadastroRestauranteService restauranteService;
 
+    @Autowired
+    private RestauranteModelAssembler restauranteModelAssembler;
+
+    @Autowired
+    private RestauranteInputDisassembler restauranteInputDisassembler;
+
     @GetMapping
     public List<RestauranteModel> listar(){
-        return RestauranteModelAssembler.toCollectionModel(restauranteRepository.findAll());
+        return restauranteModelAssembler.toCollectionModel(restauranteRepository.findAll());
     }
 
     @GetMapping("/{restauranteId}")
@@ -38,7 +44,7 @@ public class RestauranteController {
     public RestauranteModel buscar(@PathVariable Long restauranteId){
         Restaurante restaurante = restauranteService.buscarOuFalhar(restauranteId);
 
-        return RestauranteModelAssembler.toModel(restaurante);
+        return restauranteModelAssembler.toModel(restaurante);
     }
 
     @Transactional
@@ -46,8 +52,8 @@ public class RestauranteController {
     @ResponseStatus(HttpStatus.CREATED)
     public RestauranteModel adicionar(@RequestBody @Valid RestauranteInput restauranteInput){
         try{
-            Restaurante restaurante = RestauranteInputDisassembler.toDomainObject(restauranteInput);
-            return RestauranteModelAssembler.toModel(restauranteService.salvar(restaurante));
+            Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
+            return restauranteModelAssembler.toModel(restauranteService.salvar(restaurante));
         }catch (CozinhaNaoEncontradaException e){
             throw new NegocioException(e.getMessage());
         }
@@ -59,8 +65,8 @@ public class RestauranteController {
     public RestauranteModel atualizar(@PathVariable Long restauranteId,
                                  @RequestBody @Valid RestauranteInput restauranteInput){
         try{
-            Restaurante restaurante = RestauranteInputDisassembler.toDomainObject(restauranteInput);
-            return RestauranteModelAssembler.toModel(restauranteService.atualizar(restauranteId, restaurante));
+            Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
+            return restauranteModelAssembler.toModel(restauranteService.atualizar(restauranteId, restaurante));
         }catch (CozinhaNaoEncontradaException e){
             throw new NegocioException(e.getMessage());
         }
@@ -72,7 +78,7 @@ public class RestauranteController {
     public RestauranteModel atualizarParcial(@PathVariable Long restauranteId,
                                         @RequestBody Map<String, Object> campos,
                                         HttpServletRequest request){
-        return RestauranteModelAssembler.toModel(restauranteService.atualizarParcial(restauranteId, campos, request));
+        return restauranteModelAssembler.toModel(restauranteService.atualizarParcial(restauranteId, campos, request));
     }
 
 }

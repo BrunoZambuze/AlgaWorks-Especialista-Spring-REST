@@ -11,7 +11,14 @@ public class RestauranteModel {
 
     private Long id;
     private String nome;
-    private BigDecimal taxaFrete;
+    /*
+        No modelo de origem a propriedade está escrita como "taxaFrete", porém no DTO estamos chamando ela de "precoFrete". Quando fazemos o
+        model mapper, a correspondência não é executada, pois a inteligência do model mapper não identifica a propriedade "taxaFrete" pois seu
+        nome é diferente. Seria muito mais fácil só alterarmos o nome da classe atual, mas vamos supor que realmente precisamos manter esse nome.
+        Para resolver esse problema devemos ir até a pasta 'core' na classe 'ModelMapperConfig' onde está localizado o Bean (instanciação) do model
+        mapper e adicionar uma nova configuração para iniciar o mapeamento dos tipos.
+     */
+    private BigDecimal precoFrete;
     private CozinhaModel cozinha;
 
 }
