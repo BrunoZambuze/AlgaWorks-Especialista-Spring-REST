@@ -1,5 +1,6 @@
 package com.algaworks.algafood_api.domain.service;
 
+import com.algaworks.algafood_api.domain.exception.NegocioException;
 import com.algaworks.algafood_api.domain.exception.RestauranteNaoEncontradoException;
 import com.algaworks.algafood_api.domain.model.Cozinha;
 import com.algaworks.algafood_api.domain.model.Restaurante;
@@ -14,7 +15,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.validation.SmartValidator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
@@ -35,6 +35,9 @@ public class CadastroRestauranteService {
     }
 
     public Restaurante salvar(Restaurante restaurante){
+        if(restaurante.getCozinha().getId() == null){
+            throw new NegocioException("Código da cozinha é obrigatório!");
+        }
         Long cozinhaId = restaurante.getCozinha().getId();
         Cozinha cozinhaEncontrada = cozinhaRepository.findByIdOrElseThrowException(cozinhaId);
 
@@ -43,17 +46,17 @@ public class CadastroRestauranteService {
         return restauranteRepository.save(restaurante);
     }
 
-    public Restaurante atualizar(Long restauranteId,
-                                 Restaurante restauranteAlterar){
-        Restaurante restauranteEncontrado = buscarOuFalhar(restauranteId);
-        Long cozinhaId = restauranteAlterar.getCozinha().getId();
+    public Restaurante atualizar(Restaurante restaurante){
+        if(restaurante.getCozinha().getId() == null){
+            throw new NegocioException("Código da cozinha é obrigatório!");
+        }
+        Long cozinhaId = restaurante.getCozinha().getId();
         Cozinha cozinhaEncontrada = cozinhaRepository.findByIdOrElseThrowException(cozinhaId);
 
-        BeanUtils.copyProperties(restauranteAlterar, restauranteEncontrado, "id", "formasPagamento", "endereco", "dataCadastro", "produtos");
-        restauranteEncontrado.setCozinha(cozinhaEncontrada);
+        restaurante.setCozinha(cozinhaEncontrada);
 
-        restauranteEncontrado = restauranteRepository.save(restauranteEncontrado);
-        return restauranteEncontrado;
+        restaurante = restauranteRepository.save(restaurante);
+        return restaurante;
 
     }
 
@@ -67,7 +70,7 @@ public class CadastroRestauranteService {
 
        merge(campos, restauranteEncontrado, request);
 
-       return atualizar(restauranteId, restauranteEncontrado);
+       return atualizar(restauranteEncontrado);
     }
 
     private void merge(Map<String, Object> campos, Restaurante restauranteAtual, HttpServletRequest request){

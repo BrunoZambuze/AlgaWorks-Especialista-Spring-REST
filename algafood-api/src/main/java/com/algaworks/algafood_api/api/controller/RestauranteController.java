@@ -5,6 +5,7 @@ import com.algaworks.algafood_api.api.model.representationmodel.RestauranteModel
 import com.algaworks.algafood_api.api.model.representationmodel.input.RestauranteInput;
 import com.algaworks.algafood_api.domain.exception.CozinhaNaoEncontradaException;
 import com.algaworks.algafood_api.domain.exception.NegocioException;
+import com.algaworks.algafood_api.domain.exception.RestauranteNaoEncontradoException;
 import com.algaworks.algafood_api.domain.model.Restaurante;
 import com.algaworks.algafood_api.domain.repository.RestauranteRepository;
 import com.algaworks.algafood_api.domain.service.CadastroRestauranteService;
@@ -63,10 +64,14 @@ public class RestauranteController {
     @PutMapping("/{restauranteId}")
     @ResponseStatus(HttpStatus.OK)
     public RestauranteModel atualizar(@PathVariable Long restauranteId,
-                                 @RequestBody @Valid RestauranteInput restauranteInput){
+                                      @RequestBody @Valid RestauranteInput restauranteInput){
         try{
-            Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
-            return restauranteModelAssembler.toModel(restauranteService.atualizar(restauranteId, restaurante));
+            Restaurante restaurante = restauranteRepository.findById(restauranteId).
+                                        orElseThrow(() -> new RestauranteNaoEncontradoException(restauranteId));
+
+            restauranteInputDisassembler.copyToDomainObject(restauranteInput, restaurante);
+
+            return restauranteModelAssembler.toModel(restauranteService.atualizar(restaurante));
         }catch (CozinhaNaoEncontradaException e){
             throw new NegocioException(e.getMessage());
         }
