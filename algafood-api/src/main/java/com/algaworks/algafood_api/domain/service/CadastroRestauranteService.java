@@ -35,9 +35,6 @@ public class CadastroRestauranteService {
     }
 
     public Restaurante salvar(Restaurante restaurante){
-        if(restaurante.getCozinha().getId() == null){
-            throw new NegocioException("Código da cozinha é obrigatório!");
-        }
         Long cozinhaId = restaurante.getCozinha().getId();
         Cozinha cozinhaEncontrada = cozinhaRepository.findByIdOrElseThrowException(cozinhaId);
 
@@ -47,9 +44,6 @@ public class CadastroRestauranteService {
     }
 
     public Restaurante atualizar(Restaurante restaurante){
-        if(restaurante.getCozinha().getId() == null){
-            throw new NegocioException("Código da cozinha é obrigatório!");
-        }
         Long cozinhaId = restaurante.getCozinha().getId();
         Cozinha cozinhaEncontrada = cozinhaRepository.findByIdOrElseThrowException(cozinhaId);
 

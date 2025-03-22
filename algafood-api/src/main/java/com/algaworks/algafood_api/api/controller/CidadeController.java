@@ -1,5 +1,9 @@
 package com.algaworks.algafood_api.api.controller;
 
+import com.algaworks.algafood_api.api.assembler.CidadeInputDisassembler;
+import com.algaworks.algafood_api.api.assembler.CidadeModelAssembler;
+import com.algaworks.algafood_api.api.model.representationmodel.CidadeModel;
+import com.algaworks.algafood_api.api.model.representationmodel.input.CidadeInput;
 import com.algaworks.algafood_api.domain.exception.EstadoNaoEncontradoException;
 import com.algaworks.algafood_api.domain.exception.NegocioException;
 import com.algaworks.algafood_api.domain.model.Cidade;
@@ -23,22 +27,29 @@ public class CidadeController {
     @Autowired
     private CadastroCidadeService cidadeService;
 
+    @Autowired
+    private CidadeModelAssembler cidadeModelAssembler;
+
+    @Autowired
+    private CidadeInputDisassembler cidadeInputDisassembler;
+
     @GetMapping
-    public List<Cidade> listar(){
-        return cidadeRepository.findAll();
+    public List<CidadeModel> listar(){
+        return cidadeModelAssembler.toCollectionModel(cidadeRepository.findAll());
     }
 
     @GetMapping("/{cidadeId}")
-    public Cidade buscar(@PathVariable Long cidadeId){
-        return cidadeRepository.findByIdOrElseThrowException(cidadeId);
+    public CidadeModel buscar(@PathVariable Long cidadeId){
+        return cidadeModelAssembler.toModel(cidadeRepository.findByIdOrElseThrowException(cidadeId));
     }
 
     @Transactional
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cidade adicionar(@RequestBody @Valid Cidade cidade){
+    public CidadeModel adicionar(@RequestBody @Valid CidadeInput cidadeInput){
+        Cidade cidade = cidadeInputDisassembler.toDomainObject(cidadeInput);
         try {
-            return cidadeService.salvar(cidade);
+            return cidadeModelAssembler.toModel(cidadeService.salvar(cidade));
         } catch (EstadoNaoEncontradoException e) {
             throw new NegocioException(e.getMessage());
         }
@@ -46,10 +57,12 @@ public class CidadeController {
 
     @Transactional
     @PutMapping("/{cidadeId}")
-    public Cidade atualizar(@PathVariable Long cidadeId,
-                            @RequestBody @Valid Cidade cidadeAlterar){
+    public CidadeModel atualizar(@PathVariable Long cidadeId,
+                            @RequestBody @Valid CidadeInput cidadeInput){
+        Cidade cidade = cidadeRepository.findByIdOrElseThrowException(cidadeId);
+        cidadeInputDisassembler.toCopyDomain(cidadeInput, cidade);
         try{
-            return cidadeService.atualizar(cidadeId, cidadeAlterar);
+            return cidadeModelAssembler.toModel(cidadeService.atualizar(cidade));
         } catch (EstadoNaoEncontradoException e) {
             throw new NegocioException(e.getMessage());
         }

@@ -28,7 +28,9 @@ public class RestauranteInputDisassembler {
     }
 
     public void copyToDomainObject(RestauranteInput restauranteInput, Restaurante restaurante){
-        entityManager.detach(restaurante.getCozinha()); //Desanexar Cozinha do Restaurante
+        // Para evitar org.hibernate.HibernateException: identifier of an instance of
+        // com.algaworks.algafood.domain.model.Estado was altered from 1 to 2
+        entityManager.detach(restaurante.getCozinha()); //Desanexar Cozinha do Restaurantew
 
         modelMapper.map(restauranteInput, restaurante);
     }

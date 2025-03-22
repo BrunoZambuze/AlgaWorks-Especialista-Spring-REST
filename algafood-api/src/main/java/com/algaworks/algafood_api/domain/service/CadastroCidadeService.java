@@ -28,17 +28,15 @@ public class CadastroCidadeService {
 
     }
 
-    public Cidade atualizar(Long cidadeId, Cidade cidadeAlterar){
+    public Cidade atualizar(Cidade cidade){
 
-            Cidade cidadeEncontrada = cidadeRepository.findByIdOrElseThrowException(cidadeId);
-
-            Long estadoId = cidadeAlterar.getEstado().getId();
+            Long estadoId = cidade.getEstado().getId();
             Estado estadoEncontrado = estadoRepository.findByIdOrElseThrowException(estadoId);
 
-            BeanUtils.copyProperties(cidadeAlterar, cidadeEncontrada, "id");
-            cidadeEncontrada.setEstado(estadoEncontrado);
-            cidadeEncontrada = cidadeRepository.save(cidadeEncontrada);
-            return cidadeEncontrada;
+            cidade.setEstado(estadoEncontrado);
+
+            cidade = cidadeRepository.save(cidade);
+            return cidade;
     }
 
     public void deletar(Long cidadeId){

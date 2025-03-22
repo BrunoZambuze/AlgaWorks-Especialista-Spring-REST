@@ -1,5 +1,9 @@
 package com.algaworks.algafood_api.api.controller;
 
+import com.algaworks.algafood_api.api.assembler.EstadoInputDisassembler;
+import com.algaworks.algafood_api.api.assembler.EstadoModelAssembler;
+import com.algaworks.algafood_api.api.model.representationmodel.EstadoModel;
+import com.algaworks.algafood_api.api.model.representationmodel.input.EstadoInput;
 import com.algaworks.algafood_api.domain.model.Estado;
 import com.algaworks.algafood_api.domain.repository.EstadoRepository;
 import com.algaworks.algafood_api.domain.service.CadastroEstadoService;
@@ -21,28 +25,38 @@ public class EstadoController {
     @Autowired
     private CadastroEstadoService estadoService;
 
+    @Autowired
+    private EstadoModelAssembler estadoModelAssembler;
+
+    @Autowired
+    private EstadoInputDisassembler estadoInputDisassembler;
+
     @GetMapping
-    public List<Estado> listar(){
-        return estadoRepository.findAll();
+    public List<EstadoModel> listar(){
+        return estadoModelAssembler.toCollectionModel(estadoRepository.findAll());
     }
 
     @GetMapping("/{estadoId}")
-    public Estado buscar(@PathVariable Long estadoId){
-        return estadoRepository.findByIdOrElseThrowException(estadoId);
+    public EstadoModel buscar(@PathVariable Long estadoId){
+        return estadoModelAssembler.toModel(estadoRepository.findByIdOrElseThrowException(estadoId));
     }
 
     @Transactional
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Estado adicionar(@RequestBody @Valid Estado estado){
-        return estadoService.adicionar(estado);
+    public EstadoModel adicionar(@RequestBody @Valid EstadoInput estadoInput){
+        Estado estado = estadoInputDisassembler.toDomainObject(estadoInput);
+        return estadoModelAssembler.toModel(estadoService.adicionar(estado));
     }
 
     @Transactional
     @PutMapping("/{estadoId}")
-    public Estado atualizar(@PathVariable Long estadoId,
-                            @RequestBody @Valid Estado estadoAlterado){
-        return estadoService.atualizar(estadoId, estadoAlterado);
+    public EstadoModel atualizar(@PathVariable Long estadoId,
+                            @RequestBody @Valid EstadoInput estadoInput){
+        Estado estado = estadoRepository.findByIdOrElseThrowException(estadoId);
+        estadoInputDisassembler.copyToDomainObject(estadoInput, estado);
+
+        return estadoModelAssembler.toModel(estadoService.atualizar(estado));
     }
 
     @Transactional

@@ -3,7 +3,6 @@ package com.algaworks.algafood_api.domain.service;
 import com.algaworks.algafood_api.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood_api.domain.model.Estado;
 import com.algaworks.algafood_api.domain.repository.EstadoRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -18,13 +17,10 @@ public class CadastroEstadoService {
         return estadoRepository.save(estado);
     }
 
-    public Estado atualizar(Long estadoId, Estado estadoAlterar){
+    public Estado atualizar(Estado estadoAlterar){
 
-            Estado estadoEncontrado = estadoRepository.findByIdOrElseThrowException(estadoId);
-
-            BeanUtils.copyProperties(estadoAlterar, estadoEncontrado, "id");
-            estadoEncontrado = estadoRepository.save(estadoEncontrado);
-            return estadoEncontrado;
+            estadoAlterar = estadoRepository.save(estadoAlterar);
+            return estadoAlterar;
 
     }
 
