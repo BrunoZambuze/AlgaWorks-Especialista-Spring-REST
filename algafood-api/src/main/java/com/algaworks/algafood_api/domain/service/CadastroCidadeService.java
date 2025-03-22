@@ -5,10 +5,10 @@ import com.algaworks.algafood_api.domain.model.Cidade;
 import com.algaworks.algafood_api.domain.model.Estado;
 import com.algaworks.algafood_api.domain.repository.CidadeRepository;
 import com.algaworks.algafood_api.domain.repository.EstadoRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CadastroCidadeService {
@@ -19,6 +19,7 @@ public class CadastroCidadeService {
     @Autowired
     private EstadoRepository estadoRepository;
 
+    @Transactional
     public Cidade salvar(Cidade cidade){
         Long estadoId = cidade.getEstado().getId();
 
@@ -28,6 +29,7 @@ public class CadastroCidadeService {
 
     }
 
+    @Transactional
     public Cidade atualizar(Cidade cidade){
 
             Long estadoId = cidade.getEstado().getId();
@@ -39,10 +41,12 @@ public class CadastroCidadeService {
             return cidade;
     }
 
+    @Transactional
     public void deletar(Long cidadeId){
         try {
             Cidade cidadeEncontrada = cidadeRepository.findByIdOrElseThrowException(cidadeId);
             cidadeRepository.delete(cidadeEncontrada);
+            cidadeRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new EntidadeEmUsoException("Cidade com id " + cidadeId + " não pode ser removida pois está sendo utilizado por outra classe");
         }

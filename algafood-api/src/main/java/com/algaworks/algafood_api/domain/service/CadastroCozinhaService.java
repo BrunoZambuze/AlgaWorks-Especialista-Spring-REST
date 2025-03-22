@@ -7,6 +7,7 @@ import com.algaworks.algafood_api.domain.repository.CozinhaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CadastroCozinhaService {
@@ -16,16 +17,19 @@ public class CadastroCozinhaService {
     @Autowired
     private CozinhaRepository cozinhaRepository;
 
+    @Transactional
     public Cozinha salvar(Cozinha cozinha){
         return cozinhaRepository.save(cozinha);
     }
 
+    @Transactional
     public void excluir(Long cozinhaId){
         try{
             if(!cozinhaRepository.existsById(cozinhaId)){
                 throw new CozinhaNaoEncontradaException(cozinhaId);
             }
             cozinhaRepository.deleteById(cozinhaId);
+            cozinhaRepository.flush(); //<-- executa todas as operações pendentes no bando de dados
 
         }catch (DataIntegrityViolationException e){
             throw new EntidadeEmUsoException(String.format(MSG_COZINHA_EM_USO, cozinhaId));

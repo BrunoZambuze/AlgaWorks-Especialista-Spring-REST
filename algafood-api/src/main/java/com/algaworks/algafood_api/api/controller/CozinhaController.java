@@ -7,10 +7,8 @@ import com.algaworks.algafood_api.api.model.representationmodel.input.CozinhaInp
 import com.algaworks.algafood_api.domain.model.Cozinha;
 import com.algaworks.algafood_api.domain.repository.CozinhaRepository;
 import com.algaworks.algafood_api.domain.service.CadastroCozinhaService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -43,7 +41,6 @@ public class CozinhaController {
         return cozinhaAssembler.toModel(cozinhaService.buscarOuFalhar(cozinhaId));
     }
 
-    @Transactional
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public CozinhaModel adicionar(@RequestBody @Valid CozinhaInput cozinhaInput){
@@ -51,7 +48,6 @@ public class CozinhaController {
         return cozinhaAssembler.toModel(cozinhaService.salvar(cozinha));
     }
 
-    @Transactional
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{cozinhaId}")
     public CozinhaModel atualizar(@PathVariable Long cozinhaId,
@@ -61,7 +57,6 @@ public class CozinhaController {
         return cozinhaAssembler.toModel(cozinhaService.salvar(cozinha));
     }
 
-    @Transactional
     @DeleteMapping("/{cozinhaId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletar(@PathVariable Long cozinhaId){

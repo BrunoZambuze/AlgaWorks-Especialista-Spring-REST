@@ -9,7 +9,6 @@ import com.algaworks.algafood_api.domain.repository.EstadoRepository;
 import com.algaworks.algafood_api.domain.service.CadastroEstadoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -41,7 +40,6 @@ public class EstadoController {
         return estadoModelAssembler.toModel(estadoRepository.findByIdOrElseThrowException(estadoId));
     }
 
-    @Transactional
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EstadoModel adicionar(@RequestBody @Valid EstadoInput estadoInput){
@@ -49,7 +47,6 @@ public class EstadoController {
         return estadoModelAssembler.toModel(estadoService.adicionar(estado));
     }
 
-    @Transactional
     @PutMapping("/{estadoId}")
     public EstadoModel atualizar(@PathVariable Long estadoId,
                             @RequestBody @Valid EstadoInput estadoInput){
@@ -59,7 +56,6 @@ public class EstadoController {
         return estadoModelAssembler.toModel(estadoService.atualizar(estado));
     }
 
-    @Transactional
     @DeleteMapping("/{estadoId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletar(@PathVariable Long estadoId){

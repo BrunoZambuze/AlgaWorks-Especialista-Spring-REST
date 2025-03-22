@@ -11,7 +11,6 @@ import com.algaworks.algafood_api.domain.repository.RestauranteRepository;
 import com.algaworks.algafood_api.domain.service.CadastroRestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +47,6 @@ public class RestauranteController {
         return restauranteModelAssembler.toModel(restaurante);
     }
 
-    @Transactional
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public RestauranteModel adicionar(@RequestBody @Valid RestauranteInput restauranteInput){
@@ -60,7 +58,6 @@ public class RestauranteController {
         }
     }
 
-    @Transactional
     @PutMapping("/{restauranteId}")
     @ResponseStatus(HttpStatus.OK)
     public RestauranteModel atualizar(@PathVariable Long restauranteId,
@@ -77,7 +74,6 @@ public class RestauranteController {
         }
     }
 
-    @Transactional
     @PatchMapping("/{restauranteId}")
     @ResponseStatus(HttpStatus.OK)
     public RestauranteModel atualizarParcial(@PathVariable Long restauranteId,
